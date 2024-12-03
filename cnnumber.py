@@ -72,6 +72,8 @@ def _中文到数字(s):
 
 def 解析中文到数字(s):
     s = 大写to小写(s.strip())
+    if s and s[0] == '负':
+        return - 解析中文到数字(s[1:])
     if len(s) >= 2 and s[-1] in 单个中文to数字 and 单个中文to数字[s[-1]] < 10 and s[-2] in '万千百' :   # 三万八 这一种
         return _中文到数字(s[:-1]) + 单个中文to数字[s[-2]] // 10 * 单个中文to数字[ s[-1] ]
     else:
@@ -178,6 +180,9 @@ assert 解析中文到数字('一亿五千万零六千三百五十五') == 15000
 assert 解析中文到数字('一百十六') == 116
 assert 解析中文到数字('一百01') == 101
 
+assert 解析中文到数字('负一百零一') == -101
+assert 解析数字到中文(-101) == '负一百零一'
+
 # 每一个assert都要有测试用例
 
 ''' test case
@@ -206,7 +211,6 @@ def test(testcount = 10, maxzeros=None, show=False):
     maxzeros = maxzeros or random.randint(1,  256)
     for i in range(testcount):
         n1 = random.randint(0, pow(10, maxzeros))
-        if show: print(n1)
         cn = 解析数字到中文(n1)
         n2 = 解析中文到数字(cn)
         大写 = 小写to大写(cn)
@@ -217,4 +221,5 @@ def test(testcount = 10, maxzeros=None, show=False):
         assert 小写 == cn, f'Error {n1} != 小写 {小写}'
         assert n1 == n3, f'Error {n1} != 小写 {小写}'
         assert n1 == n4, f'Error {n1} != 大写 {大写}'
+        if show: print(f'{n1} == {cn}')
     print('rand test ok', testcount, 'times, max', maxzeros, '位')
